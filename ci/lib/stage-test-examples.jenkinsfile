@@ -218,6 +218,20 @@ stage('test-examples') {
                 }
             } catch (Exception e) { }
         }
+	
+	if (["ubuntu", "debian"].contains(env.os_release_id)) {
+            try {
+                timeout(time: (env.EDMM ? 65 : 25), unit: 'MINUTES') {
+                    sh '''
+                        cd CI-Examples/mysql
+                        sudo -E make install-dependencies
+                        make all
+                        make ${MAKEOPTS} check 2>&1 | tee RESULT
+                    '''
+                }
+            } catch (Exception e) { }
+        }
+
     }
 
     try {
