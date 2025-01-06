@@ -274,6 +274,17 @@ class Test_Workload_Results():
         assert("Success" in tfserving_contents)
         assert("error: " not in tfserving_contents)
 
+    @pytest.mark.examples
+    @pytest.mark.skipif((os_release_id not in ["ubuntu", "debian"]) or
+                    ((int(no_cores) < 16) and sgx_mode == '1'),
+                    reason="MySQL enabled only for above Ubuntu and debian Configurations.")
+    def test_mysql_workload(self):
+        mysql_result = open("CI-Examples/mysql/RESULT", "r")
+        mysql_contents = mysql_result.read()
+        assert("Success 1/2" in mysql_contents)
+        assert("Success 2/2" in mysql_contents)
+        assert("error: " not in mysql_contents)
+
     @pytest.mark.gsc
     def test_gsc_bash_workload(self):
         gsc_bash_result = open("bash_result", "r")
