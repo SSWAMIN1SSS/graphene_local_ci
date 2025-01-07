@@ -7,7 +7,7 @@ stage('test-examples') {
         env.MODE = "direct"
     }
 
-    if (["ubuntu20.04"].contains(env.base_os)) {
+    /*if (["ubuntu20.04"].contains(env.base_os)) {
         try {
             timeout(time: 60, unit: 'MINUTES') {
                 sh '''
@@ -217,13 +217,19 @@ stage('test-examples') {
                     '''
                 }
             } catch (Exception e) { }
-        }
+        }*/
 	
 	if (["ubuntu", "debian"].contains(env.os_release_id)) {
             try {
                 timeout(time: (env.EDMM ? 65 : 25), unit: 'MINUTES') {
                     sh '''
-                        cd CI-Examples/mysql
+                        export PID=$(lsof -t -i:3306)
+                        if [ "$PID" != "" ]
+                        then
+                            echo "Killing $PID"
+                            kill -9 $PID
+                        fi
+			cd CI-Examples/mysql
                         sudo -E make install-dependencies
                         make all
                         make ${MAKEOPTS} check 2>&1 | tee RESULT
@@ -234,7 +240,7 @@ stage('test-examples') {
 
     }
 
-    try {
+    /*try {
         timeout(time: 20, unit: 'MINUTES') {
             sh '''
                 export PID=$(lsof -t -i:5201)
@@ -251,5 +257,5 @@ stage('test-examples') {
                 kill $(cat server.PID)
             '''
         }
-    } catch (Exception e) { }
+    } catch (Exception e) { }*/
 }

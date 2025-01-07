@@ -56,15 +56,16 @@ run-native: all
 	sudo mysql -u root --skip-password -e 'SELECT DATABASE();' 2>&1 | tee OUTPUT1
 	@grep -q 'DATABASE()' OUTPUT1 && grep -q 'NULL' OUTPUT1 && echo [ "Success 2/2" ]
 
+
 .PHONY: install-dependencies
 install-dependencies:
 	sudo apt install -y mysql-server
-	sudo sed -i "s|^\(log_error.*\)|#\1|g" /etc/mysql/mysql.conf.d/mysqld.cnf
+	#sudo sed -i "s|^\(log_error.*\)|#\1|g" /etc/mysql/mysql.conf.d/mysqld.cnf
 	sudo systemctl stop mysql.service
 	sudo mkdir -p /var/run/mysqld
 	sudo chown -R $$USER:$$USER /var/run/mysqld
 	sudo chown -R $$USER:$$USER /var/lib/mysql-files
-	sudo /etc/init.d/mysql start
+	sudo /etc/init.d/mysql start 2>&1 | tee CHECK
 
 .PHONY: clean
 clean:
