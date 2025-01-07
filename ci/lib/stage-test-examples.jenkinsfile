@@ -7,7 +7,7 @@ stage('test-examples') {
         env.MODE = "direct"
     }
 
-    /*if (["ubuntu20.04"].contains(env.base_os)) {
+    if (["ubuntu20.04"].contains(env.base_os)) {
         try {
             timeout(time: 60, unit: 'MINUTES') {
                 sh '''
@@ -217,7 +217,7 @@ stage('test-examples') {
                     '''
                 }
             } catch (Exception e) { }
-        }*/
+        }
 	
 	if (["ubuntu", "debian"].contains(env.os_release_id)) {
             try {
@@ -240,7 +240,7 @@ stage('test-examples') {
 
     }
 
-    /*try {
+    try {
         timeout(time: 20, unit: 'MINUTES') {
             sh '''
                 export PID=$(lsof -t -i:5201)
@@ -257,5 +257,5 @@ stage('test-examples') {
                 kill $(cat server.PID)
             '''
         }
-    } catch (Exception e) { }*/
+    } catch (Exception e) { }
 }
