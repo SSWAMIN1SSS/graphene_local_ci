@@ -44,28 +44,46 @@ endif
 
 .PHONY: check
 check: all
-	$(GRAMINE) mysqld --initialize --datadir /tmp/mysql-data 2>&1 | tee OUTPUT
-	@grep -q '\[Server\] A temporary password is generated for' OUTPUT && echo [ "Success 1/2" ]
-	sudo mysql -u root --skip-password -e 'SELECT DATABASE();' 2>&1 | tee OUTPUT1
-	@grep -q 'DATABASE()' OUTPUT1 && grep -q 'NULL' OUTPUT1 && echo "Success 2/2"
+	mysqld --initialize-insecure --datadir=/tmp/mysql-data 2>&1 | tee OUTPUT
+	@grep -q '\[Server\] root@localhost is created with an empty password !' OUTPUT && echo [ "Success 1/2" ]
+	sleep 5s && $(GRAMINE) mysqld --datadir /tmp/mysql-data &
 
 .PHONY: run-native
 run-native: all
-	mysqld --initialize --datadir /tmp/mysql-data 2>&1 | tee OUTPUT
-	@grep -q '\[Server\] A temporary password is generated for' OUTPUT && echo [ "Success 1/2" ]
-	sudo mysql -u root --skip-password -e 'SELECT DATABASE();' 2>&1 | tee OUTPUT1
-	@grep -q 'DATABASE()' OUTPUT1 && grep -q 'NULL' OUTPUT1 && echo [ "Success 2/2" ]
-
+	mysqld --initialize-insecure --datadir=/tmp/mysql-data 2>&1 | tee OUTPUT
+	@grep -q '\[Server\] root@localhost is created with an empty password !' OUTPUT && echo [ "Success 1/2" ]
+	sleep 5s && mysqld --datadir /tmp/mysql-data &
 
 .PHONY: install-dependencies
 install-dependencies:
-	sudo apt install -y mysql-server
-	#sudo sed -i "s|^\(log_error.*\)|#\1|g" /etc/mysql/mysql.conf.d/mysqld.cnf
-	sudo systemctl stop mysql.service
-	sudo mkdir -p /var/run/mysqld
+	#apt update
+	apt install -y mysql-server
+	apt install -y sysbench
+	sed -i "s|^\(log_error.*\)|#\1|g" /etc/mysql/mysql.conf.d/mysqld.cnf
+	systemctl stop mysql.service
+	mkdir -p /var/run/mysqld
+	mkdir -p /var/lib/mysql-files
+
+.PHONY: privileges
+privileges:
 	sudo chown -R $$USER:$$USER /var/run/mysqld
 	sudo chown -R $$USER:$$USER /var/lib/mysql-files
-	sudo /etc/init.d/mysql start 2>&1 | tee CHECK
+
+.PHONY: uninstall-mysql
+uninstall-mysql:
+	-systemctl stop mysql.service
+	-pkill -9 mysqld
+	apt remove --purge -y mysql-server sysbench
+	apt autoremove --purge -y
+	rm -rf /var/run/mysqld /tmp/mysql-data /var/lib/mysql-files *.sig *.manifest.sgx *.manifest
+
+.PHONY: conncheck
+conncheck:
+	sleep 55s && sudo mysqladmin -h 127.0.0.1 -P 3306 create sbtest
+	sysbench --db-driver=mysql --mysql-host=127.0.0.1 --mysql-port=3306 --mysql-user=root --mysql-db=sbtest --time=20 --report-interval=5 oltp_read_write --tables=2 --table_size=100000 --threads=32 prepare 2>&1 | tee CREATE_RESULT
+	sysbench --db-driver=mysql --mysql-host=127.0.0.1 --mysql-port=3306 --mysql-user=root --mysql-db=sbtest --time=20 --report-interval=5 oltp_read_write --tables=2 --table_size=100000 --threads=32 run 2>&1 | tee RUN_RESULT
+	sysbench --db-driver=mysql --mysql-host=127.0.0.1 --mysql-port=3306 --mysql-user=root --mysql-db=sbtest --time=20 --report-interval=5 oltp_read_write --tables=2 --table_size=100000 --threads=32 cleanup 2>&1 | tee DELETE_RESULT
+	#sudo mysqladmin -h 127.0.0.1 -P 3306 drop sbtest
 
 .PHONY: clean
 clean:
