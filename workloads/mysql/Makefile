@@ -57,6 +57,7 @@ check: all
 .PHONY: install-dependencies
 install-dependencies:
 	#apt update
+	-pkill -9 mysqld
 	apt install -y mysql-server
 	apt install -y sysbench
 	sed -i "s|^\(log_error.*\)|#\1|g" /etc/mysql/mysql.conf.d/mysqld.cnf
@@ -71,7 +72,6 @@ privileges:
 
 .PHONY: uninstall-mysql
 uninstall-mysql:
-	-systemctl stop mysql.service
 	-pkill -9 mysqld
 	apt remove --purge -y mysql-server sysbench
 	apt autoremove --purge -y
