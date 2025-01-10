@@ -223,16 +223,11 @@ stage('test-examples') {
             try {
                 timeout(time: (env.EDMM ? 65 : 25), unit: 'MINUTES') {
                     sh '''
-                        export PID=$(lsof -t -i:3306)
-                        if [ "$PID" != "" ]
-                        then
-                            echo "Killing $PID"
-                            kill -9 $PID
-                        fi
 			cd CI-Examples/mysql
-                        sudo -E make install-dependencies
-                        make all
+                        sudo make uninstall-mysql && make clean
+			sudo -E make install-dependencies && make privileges
                         make ${MAKEOPTS} check 2>&1 | tee RESULT
+			make conncheck
                     '''
                 }
             } catch (Exception e) { }
