@@ -64,11 +64,13 @@ install-dependencies:
 	systemctl stop mysql.service
 	mkdir -p /var/run/mysqld
 	mkdir -p /var/lib/mysql-files
+	chown -R mysql:mysql /var/run/mysqld
+	chown -R mysql:mysql /var/lib/mysql-files
 
-.PHONY: privileges
-privileges:
-	sudo chown -R $$USER:$$USER /var/run/mysqld
-	sudo chown -R $$USER:$$USER /var/lib/mysql-files
+#.PHONY: privileges
+#privileges:
+#	sudo chown -R $$USER:$$USER /var/run/mysqld
+#	sudo chown -R $$USER:$$USER /var/lib/mysql-files
 
 .PHONY: uninstall-mysql
 uninstall-mysql:
