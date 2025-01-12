@@ -56,8 +56,8 @@ check: all
 
 .PHONY: install-dependencies
 install-dependencies:
-	#apt update
-	-pkill -9 mysqld
+	apt update
+	#-pkill -9 mysqld
 	apt install -y mysql-server
 	apt install -y sysbench
 	sed -i "s|^\(log_error.*\)|#\1|g" /etc/mysql/mysql.conf.d/mysqld.cnf
