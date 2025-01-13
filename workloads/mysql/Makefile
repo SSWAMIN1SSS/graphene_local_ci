@@ -56,10 +56,10 @@ check: all
 
 .PHONY: install-dependencies
 install-dependencies:
-	sudo apt update
+	#sudo apt update
 	-pkill -9 mysqld
-	sudo apt install -y mysql-server
-	sudo apt install -y sysbench
+	sudo -E apt-get install -y mysql-server
+	sudo -E apt-get install -y sysbench
 	sed -i "s|^\(log_error.*\)|#\1|g" /etc/mysql/mysql.conf.d/mysqld.cnf
 	systemctl stop mysql.service
 	mkdir -p /var/run/mysqld
@@ -75,8 +75,8 @@ privileges:
 .PHONY: uninstall-mysql
 uninstall-mysql:
 	-sudo pkill -9 mysqld
-	sudo apt remove --purge -y mysql-server sysbench
-	sudo apt autoremove --purge -y
+	sudo -E apt-get remove --purge -y mysql-server sysbench
+	sudo -E apt-get autoremove --purge -y
 	rm -rf /var/run/mysqld /tmp/mysql-data /var/lib/mysql-files *.sig *.manifest.sgx *.manifest
 
 .PHONY: conncheck
