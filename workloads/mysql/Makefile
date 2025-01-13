@@ -48,11 +48,11 @@ check: all
 	@grep -q '\[Server\] root@localhost is created with an empty password !' OUTPUT && echo [ "Success 1/2" ]
 	sleep 5s && $(GRAMINE) mysqld --datadir /tmp/mysql-data &
 
-#.PHONY: run-native
-#run-native: all
-#	mysqld --initialize-insecure --datadir=/tmp/mysql-data 2>&1 | tee OUTPUT
-#	@grep -q '\[Server\] root@localhost is created with an empty password !' OUTPUT && echo [ "Success 1/2" ]
-#	sleep 5s && mysqld --datadir /tmp/mysql-data &
+.PHONY: run-native
+run-native:
+	mysqld --initialize-insecure --datadir=/tmp/mysql-data 2>&1 | tee OUTPUT
+	@grep -q '\[Server\] root@localhost is created with an empty password !' OUTPUT && echo [ "Success 1/2" ]
+	sleep 5s && mysqld --datadir /tmp/mysql-data &
 
 .PHONY: install-dependencies
 install-dependencies:
