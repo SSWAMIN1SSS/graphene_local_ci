@@ -74,14 +74,14 @@ privileges:
 
 .PHONY: uninstall-mysql
 uninstall-mysql:
-	-sudo pkill -9 mysqld
+	-sudo -E pkill -9 mysqld
 	sudo -E apt-get remove --purge -y mysql-server sysbench
 	sudo -E apt-get autoremove --purge -y
 	rm -rf /var/run/mysqld /tmp/mysql-data /var/lib/mysql-files *.sig *.manifest.sgx *.manifest
 
 .PHONY: conncheck
 conncheck:
-	sleep 55s && sudo mysqladmin -h 127.0.0.1 -P 3306 create sbtest
+	sudo mysqladmin -h 127.0.0.1 -P 3306 create sbtest
 	sysbench --db-driver=mysql --mysql-host=127.0.0.1 --mysql-port=3306 --mysql-user=root --mysql-db=sbtest --time=20 --report-interval=5 oltp_read_write --tables=2 --table_size=100000 --threads=32 prepare 2>&1 | tee CREATE_RESULT
 	sysbench --db-driver=mysql --mysql-host=127.0.0.1 --mysql-port=3306 --mysql-user=root --mysql-db=sbtest --time=20 --report-interval=5 oltp_read_write --tables=2 --table_size=100000 --threads=32 run 2>&1 | tee RUN_RESULT
 	sysbench --db-driver=mysql --mysql-host=127.0.0.1 --mysql-port=3306 --mysql-user=root --mysql-db=sbtest --time=20 --report-interval=5 oltp_read_write --tables=2 --table_size=100000 --threads=32 cleanup 2>&1 | tee DELETE_RESULT
