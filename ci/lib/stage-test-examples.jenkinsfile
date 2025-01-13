@@ -11,12 +11,12 @@ stage('test-examples') {
             try {
                   sh '''
 			cd CI-Examples/mysql
-                        sudo make uninstall-mysql && make clean
-			sudo -E make install-dependencies && make privileges
+                        #sudo make uninstall-mysql && make clean
+			#sudo -E make install-dependencies && make privileges
                         make all && make check
 			sleep 60s
                         make conncheck
-			sudo make uninstall-mysql
+			#sudo make uninstall-mysql
                     '''
          } catch (Exception e) { }
      }
