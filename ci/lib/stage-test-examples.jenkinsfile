@@ -11,9 +11,9 @@ stage('test-examples') {
             try {
                   sh '''
 			cd CI-Examples/mysql
-                        sudo make uninstall-mysql
-			sudo -E make install-dependencies
-                        make run-native
+                        sudo make uninstall-mysql && make clean
+			sudo -E make install-dependencies && make privileges
+                        make all && make check
                         make conncheck
 			sudo make uninstall-mysql
                     '''

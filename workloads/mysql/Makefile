@@ -48,35 +48,35 @@ check: all
 	@grep -q '\[Server\] root@localhost is created with an empty password !' OUTPUT && echo [ "Success 1/2" ]
 	sleep 5s && $(GRAMINE) mysqld --datadir /tmp/mysql-data &
 
-.PHONY: run-native
-run-native:
-	mysqld --initialize-insecure --datadir=/tmp/mysql-data 2>&1 | tee OUTPUT
-	@grep -q '\[Server\] root@localhost is created with an empty password !' OUTPUT && echo [ "Success 1/2" ]
-	sleep 5s && mysqld --datadir /tmp/mysql-data &
+#.PHONY: run-native
+#run-native: all
+#	mysqld --initialize-insecure --datadir=/tmp/mysql-data 2>&1 | tee OUTPUT
+#	@grep -q '\[Server\] root@localhost is created with an empty password !' OUTPUT && echo [ "Success 1/2" ]
+#	sleep 5s && mysqld --datadir /tmp/mysql-data &
 
 .PHONY: install-dependencies
 install-dependencies:
-	sudo apt update
-	#-pkill -9 mysqld
-	sudo apt install -y mysql-server
-	sudo apt install -y sysbench
+	apt update
+	-pkill -9 mysqld
+	apt install -y mysql-server
+	apt install -y sysbench
 	sed -i "s|^\(log_error.*\)|#\1|g" /etc/mysql/mysql.conf.d/mysqld.cnf
 	systemctl stop mysql.service
 	mkdir -p /var/run/mysqld
 	mkdir -p /var/lib/mysql-files
-	chown -R mysql:mysql /var/run/mysqld
-	chown -R mysql:mysql /var/lib/mysql-files
+	#sudo chown -R mysql:mysql /var/run/mysqld
+	#sudo chown -R mysql:mysql /var/lib/mysql-files
 
-#.PHONY: privileges
-#privileges:
-#	sudo chown -R $$USER:$$USER /var/run/mysqld
-#	sudo chown -R $$USER:$$USER /var/lib/mysql-files
+.PHONY: privileges
+privileges:
+	sudo chown -R $$USER:$$USER /var/run/mysqld
+	sudo chown -R $$USER:$$USER /var/lib/mysql-files
 
 .PHONY: uninstall-mysql
 uninstall-mysql:
-	-pkill -9 mysqld
-	apt remove --purge -y mysql-server sysbench
-	apt autoremove --purge -y
+	-sudo pkill -9 mysqld
+	sudo apt remove --purge -y mysql-server sysbench
+	sudo apt autoremove --purge -y
 	rm -rf /var/run/mysqld /tmp/mysql-data /var/lib/mysql-files *.sig *.manifest.sgx *.manifest
 
 .PHONY: conncheck
