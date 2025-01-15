@@ -12,8 +12,9 @@ stage('test-examples') {
                   sh '''
 			cd CI-Examples/mysql
                         #sudo make uninstall-mysql && make clean
-			#sudo -E make install-dependencies && make privileges
-                        make all && make check
+			make clean
+			sudo -E make install-dependencies && make privileges
+			make ${MAKEOPTS} all && make ${MAKEOPTS} check
 			sleep 60s
                         make conncheck
 			#sudo make uninstall-mysql

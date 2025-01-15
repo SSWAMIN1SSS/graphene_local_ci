@@ -46,7 +46,7 @@ endif
 check: all
 	mysqld --initialize-insecure --datadir=/tmp/mysql-data 2>&1 | tee OUTPUT
 	@grep -q '\[Server\] root@localhost is created with an empty password !' OUTPUT && echo [ "Success 1/2" ]
-	sleep 5s && $(GRAMINE) mysqld --datadir /tmp/mysql-data &
+	sleep 5s && $(GRAMINE) mysqld --initialize --datadir /tmp/mysql-data &
 
 #.PHONY: run-native
 #run-native: all
@@ -58,13 +58,13 @@ check: all
 install-dependencies:
 	#sudo apt update
 	-pkill -9 mysqld
-	sudo -E apt-get install -y mysql-server
-	sudo -E apt-get install -y sysbench
-	sudo -E apt-get install -y mysqladmin
-	sed -i "s|^\(log_error.*\)|#\1|g" /etc/mysql/mysql.conf.d/mysqld.cnf
-	systemctl stop mysql.service
-	mkdir -p /var/run/mysqld
-	mkdir -p /var/lib/mysql-files
+	#sudo -E apt-get install -y mysql-server
+	#sudo -E apt-get install -y sysbench
+	#sudo -E apt-get install -y mysqladmin
+	sudo sed -i "s|^\(log_error.*\)|#\1|g" /etc/mysql/mysql.conf.d/mysqld.cnf
+	sudo systemctl stop mysql.service
+	sudo mkdir -p /var/run/mysqld
+	sudo mkdir -p /var/lib/mysql-files
 	#sudo chown -R mysql:mysql /var/run/mysqld
 	#sudo chown -R mysql:mysql /var/lib/mysql-files
 
@@ -75,14 +75,14 @@ privileges:
 
 .PHONY: uninstall-mysql
 uninstall-mysql:
-	-sudo -E pkill -9 mysqld
-	sudo -E apt-get remove --purge -y mysql-server sysbench mysqladmin
-	sudo -E apt-get autoremove --purge -y
-	rm -rf /var/run/mysqld /tmp/mysql-data /var/lib/mysql-files *.sig *.manifest.sgx *.manifest
+	#-sudo -E pkill -9 mysqld
+	#sudo -E apt-get remove --purge -y mysql-server sysbench #mysqladmin
+	#sudo -E apt-get autoremove --purge -y
+	#rm -rf /var/run/mysqld /tmp/mysql-data /var/lib/mysql-files *.sig *.manifest.sgx *.manifest
 
 .PHONY: conncheck
 conncheck:
-	sudo mysqladmin -h 127.0.0.1 -P 3306 create sbtest
+	sudo -E mysqladmin -h 127.0.0.1 -P 3306 create sbtest
 	sysbench --db-driver=mysql --mysql-host=127.0.0.1 --mysql-port=3306 --mysql-user=root --mysql-db=sbtest --time=20 --report-interval=5 oltp_read_write --tables=2 --table_size=100000 --threads=32 prepare 2>&1 | tee CREATE_RESULT
 	sysbench --db-driver=mysql --mysql-host=127.0.0.1 --mysql-port=3306 --mysql-user=root --mysql-db=sbtest --time=20 --report-interval=5 oltp_read_write --tables=2 --table_size=100000 --threads=32 run 2>&1 | tee RUN_RESULT
 	sysbench --db-driver=mysql --mysql-host=127.0.0.1 --mysql-port=3306 --mysql-user=root --mysql-db=sbtest --time=20 --report-interval=5 oltp_read_write --tables=2 --table_size=100000 --threads=32 cleanup 2>&1 | tee DELETE_RESULT
