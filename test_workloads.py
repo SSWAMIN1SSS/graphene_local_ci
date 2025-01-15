@@ -19,8 +19,7 @@ ra_type = os.environ.get("RA_TYPE", "none")
 
 class Test_Workload_Results():
     @pytest.mark.examples
-    @pytest.mark.skipif((os_release_id not in ["ubuntu", "debian"]) or
-                    ((int(no_cores) < 16) and sgx_mode == '1'),
+    @pytest.mark.skipif((os_release_id not in ["ubuntu", "debian"]),
                     reason="MySQL enabled only for above Ubuntu and debian Configurations.")
     def test_mysql_workload(self):
         mysql_result = open("CI-Examples/mysql/OUTPUT", "r")

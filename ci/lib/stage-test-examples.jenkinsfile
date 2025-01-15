@@ -11,8 +11,6 @@ stage('test-examples') {
             try {
                   sh '''
 			cd CI-Examples/mysql
-                        #sudo make uninstall-mysql && make clean
-			make clean
 			sudo -E make install-dependencies && make privileges
 			make ${MAKEOPTS} all && make ${MAKEOPTS} check
 			sleep 60s
