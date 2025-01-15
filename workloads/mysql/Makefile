@@ -46,7 +46,7 @@ endif
 check: all
 	mysqld --initialize-insecure --datadir=/tmp/mysql-data 2>&1 | tee OUTPUT
 	@grep -q '\[Server\] root@localhost is created with an empty password !' OUTPUT && echo [ "Success 1/2" ]
-	sleep 5s && $(GRAMINE) mysqld --initialize --datadir /tmp/mysql-data &
+	sleep 5s && ($(GRAMINE) mysqld --initialize --datadir /tmp/mysql-data &) > OUTPUT1
 
 #.PHONY: run-native
 #run-native: all
@@ -70,8 +70,11 @@ install-dependencies:
 
 .PHONY: privileges
 privileges:
+	echo $$USER
 	sudo chown -R $$USER:$$USER /var/run/mysqld
 	sudo chown -R $$USER:$$USER /var/lib/mysql-files
+	sudo chmod 777 /var/run/mysqld
+	sudo chmod 777 /var/lib/mysql-files
 
 .PHONY: uninstall-mysql
 uninstall-mysql:

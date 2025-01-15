@@ -51,7 +51,7 @@ node (node_label) {
         }
     } finally {
         stage('cleanup'){
-            sh "docker rmi local:${env.BUILD_TAG} -f"
+            sh "echo 'hello'"
         }
     }
 
