@@ -64,9 +64,9 @@ install-dependencies:
 privileges:
 	echo $$USER
 	sudo sed -i "s|^\(log_error.*\)|#\1|g" /etc/mysql/mysql.conf.d/mysqld.cnf
-        -sudo systemctl stop mysql.service
-        sudo mkdir -p /var/run/mysqld
-        sudo mkdir -p /var/lib/mysql-files
+	-sudo systemctl stop mysql.service
+	sudo mkdir -p /var/run/mysqld
+	sudo mkdir -p /var/lib/mysql-files
 	sudo chown -R $$USER:$$USER /var/run/mysqld
 	sudo chown -R $$USER:$$USER /var/lib/mysql-files
 	sudo chmod 777 /var/run/mysqld
