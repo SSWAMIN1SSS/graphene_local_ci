@@ -75,8 +75,8 @@ privileges:
 .PHONY: uninstall-mysql
 uninstall-mysql:
 	#-sudo -E pkill -9 mysqld
-	sudo -E apt-get remove --purge -y mysql* sysbench
-	sudo -E apt-get autoremove --purge -y
+	#sudo -E apt-get remove --purge -y mysql* sysbench
+	#sudo -E apt-get autoremove --purge -y
 	rm -rf /var/run/mysqld /tmp/mysql-data /var/lib/mysql-files *.sig *.manifest.sgx *.manifest
 
 .PHONY: conncheck
@@ -91,7 +91,7 @@ conncheck:
 .PHONY: clean
 clean:
 	$(RM) *.sig *.manifest.sgx *.manifest
-	$(RM) -r /tmp/mysql-data
+	$(RM) -rf /tmp/mysql-data
 
 .PHONY: distclean
 distclean: clean
