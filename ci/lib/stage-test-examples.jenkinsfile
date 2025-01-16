@@ -13,7 +13,7 @@ stage('test-examples') {
 			cd CI-Examples/mysql
 			make privileges
 			make ${MAKEOPTS} all && make ${MAKEOPTS} check
-			sleep 60s
+			sleep 150s
                         make conncheck
 			make clean
                     '''
