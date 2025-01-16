@@ -35,7 +35,7 @@ class Test_Workload_Results():
         assert("error: " not in mysql_contents)
         mysql_result = open("CI-Examples/mysql/RUN_RESULT", "r")
         mysql_contents = mysql_result.read()
-        assert("Threads fairness: " in mysql_contents)
+        assert("Threads fairness:" in mysql_contents)
         assert("error: " not in mysql_contents)
         mysql_result = open("CI-Examples/mysql/DELETE_RESULT", "r")
         mysql_contents = mysql_result.read()
