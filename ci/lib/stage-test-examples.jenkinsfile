@@ -7,8 +7,9 @@ stage('test-examples') {
         env.MODE = "direct"
     }
 
-    if (["ubuntu", "debian"].contains(env.os_release_id)) {
+    if (env.no_cpu.toInteger() > 16) {
             try {
+		timeout(time:30,unit: 'MINUTES') {
                   sh '''
 			cd CI-Examples/mysql
 			make privileges
@@ -17,6 +18,7 @@ stage('test-examples') {
                         make conncheck
 			make clean
                     '''
+		}
          } catch (Exception e) { }
      }
 }
