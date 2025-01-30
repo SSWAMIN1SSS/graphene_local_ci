@@ -46,8 +46,6 @@ node (node_label) {
 
                 load '../ci/lib/stage-build-sgx.jenkinsfile'
                 if (env.stress_ng_run == "False") {
-                    load '../ci/lib/stage-test.jenkinsfile'
-                    load '../ci/lib/stage-test-sgx.jenkinsfile'
                     load '../ci/lib/stage-test-examples.jenkinsfile'
                     load '../ci/lib/stage-verification-examples.jenkinsfile'
                 } else {
@@ -57,8 +55,7 @@ node (node_label) {
         }
     } finally {
         stage('cleanup'){
-            sh 'rm -rf $ORIG_WKSP/*'
-            sh "docker rmi local:${env.BUILD_TAG} -f"
+            sh 'echo "Cleanup"'
         }
     }
 

@@ -45,6 +45,7 @@ RUN dnf config-manager --set-enabled -y crb && \
         libXrender \
         lsof \
         mysql-server \
+        mariadb-server \
         nasm \
         nc \
         ncurses-devel \
