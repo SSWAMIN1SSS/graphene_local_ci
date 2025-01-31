@@ -60,7 +60,7 @@ sgx_sign: mysqld.manifest
 
 .PHONY: install-mariadb
 install-mariadb:
-	#sudo -E $(PKG_MANAGER) install -y mariadb-server
+	sudo -E $(PKG_MANAGER) install -y mariadb-server
 	-sudo mkdir -p /var/run/mysqld
 	-sudo mkdir -p /var/lib/mysql
 

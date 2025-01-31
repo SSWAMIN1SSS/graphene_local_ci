@@ -21,10 +21,16 @@
                   make ${MAKEOPTS} all && make ${MAKEOPTS} check
                   sleep 150s
                   make conncheck
-                  make clean
                  '''
                 }
            } catch (Exception e) {}
+           finally {
+             sh '''
+               cd CI-Examples/mysql
+               make clean
+               make uninstall-mysql
+             ''' 
+          }
        }
    }
 

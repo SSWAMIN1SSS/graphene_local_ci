@@ -51,7 +51,6 @@ RUN dnf update -y \
         libunwind \
         make \
         mysql-server \
-        mariadb-server \
         nasm \
         nc \
         net-tools \
