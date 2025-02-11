@@ -297,7 +297,7 @@ class Test_Workload_Results():
         assert("Success" in tfserving_contents)
         assert("error: " not in tfserving_contents)
 
-    @pytest.mark.gsc
+    @pytest.mark.gscs
     def test_gsc_bash_workload(self):
         gsc_bash_result = open("bash_result", "r")
         gsc_bash_log = gsc_bash_result.read()
@@ -307,28 +307,28 @@ class Test_Workload_Results():
             assert(re.search('Mem:(.*)Swap:', gsc_bash_log, re.DOTALL))
         assert("error: " not in gsc_bash_log)
 
-    @pytest.mark.gsc
+    @pytest.mark.gscs
     def test_gsc_python_workload(self):
         gsc_python_result = open("python_result", "r")
         gsc_python_log = gsc_python_result.read()
         assert("HelloWorld!" in gsc_python_log)
         assert("error: " not in gsc_python_log)
 
-    @pytest.mark.gsc
+    @pytest.mark.gscs
     def test_gsc_helloworld_workload(self):
         gsc_helloworld_result = open("helloworld_result", "r")
         gsc_helloworld_log = gsc_helloworld_result.read()
         assert('"Hello World! Let\'s check escaped symbols: < & > "' in gsc_helloworld_log)
         assert("error: " not in gsc_helloworld_log)
 
-    @pytest.mark.gsc
+    @pytest.mark.gscs
     def test_gsc_helloworld_direct_workload(self):
         gsc_helloworld_result = open("helloworld_direct_result", "r")
         gsc_helloworld_log = gsc_helloworld_result.read()
         assert('"Hello World! Let\'s check escaped symbols: < & > "' in gsc_helloworld_log)
         assert("error: " not in gsc_helloworld_log)
 
-    @pytest.mark.gsc
+    @pytest.mark.gscs
     @pytest.mark.skipif(distro_ver != "debian:11", reason='java-simple is enabled only on debian11 currently')
     def test_gsc_java_simple_workload(self):
         gsc_java_simple_result = open("openjdk-simple_result", "r")
@@ -336,7 +336,7 @@ class Test_Workload_Results():
         assert("Hello from Graminized Java application!" in gsc_java_simple_log)
         assert("error: " not in gsc_java_simple_log)
 
-    @pytest.mark.gsc
+    @pytest.mark.gscs
     @pytest.mark.skipif(distro_ver != "debian:11", reason='java-spring-boot is enabled only on debian11 currently')
     def test_gsc_java_spring_boot_workload(self):
         gsc_java_springboot_result = open("openjdk-spring-boot_result", "r")
@@ -355,7 +355,7 @@ class Test_Workload_Results():
                ("item: 'lamp'" in mongodb_contents))
         assert("error: " not in mongodb_contents)
 
-    @pytest.mark.gsc
+    @pytest.mark.gscs
     def test_gsc_gramine_build_bash_workload(self):
         gsc_bash_result = open("gramine_build_bash_result", "r")
         gsc_bash_log = gsc_bash_result.read()
@@ -384,6 +384,10 @@ class Test_Workload_Results():
     @pytest.mark.gsc
     @pytest.mark.skipif(distro_ver != "ubuntu:22.04", reason='GSC pytorch base image version is compatible with Ubuntu 22.04')
     def test_gsc_pytorch_workload(self):
+        gsc_build_log = open("gsc_build_log_release", "r")
+        assert("RUN cd /gramine     && meson setup build/ --prefix=\"/gramine/meson_build_output\"        --buildtype=release" in gsc_build_log)
+        assert("buildtype                                       : release" in gsc_build_log)
+
         gsc_pytorch_verifier_output = open("gsc_pytorch_verifier_result", "r")
         gsc_pytorch_verifier_log = gsc_pytorch_verifier_output.read()
         assert("error: " not in gsc_pytorch_verifier_log)
@@ -393,3 +397,33 @@ class Test_Workload_Results():
         assert("Done. The result was written to `result.txt`." in gsc_pytorch_log)
         assert("error: " not in gsc_pytorch_log)
 
+
+    @pytest.mark.gsc
+    @pytest.mark.skipif(distro_ver != "ubuntu:22.04", reason='GSC pytorch base image version is compatible with Ubuntu 22.04')
+    def test_gsc_pytorch_debug_workload(self):
+        gsc_build_log = open("gsc_build_log_debug", "r")
+        assert("RUN cd /gramine     && meson setup build/ --prefix=\"/gramine/meson_build_output\"        --buildtype=debug" in gsc_build_log)
+        assert("buildtype                                       : debug" in gsc_build_log)
+        gsc_pytorch_verifier_output = open("gsc_pytorch_d_verifier_result", "r")
+        gsc_pytorch_verifier_log = gsc_pytorch_verifier_output.read()
+        assert("error: " not in gsc_pytorch_verifier_log)
+
+        gsc_pytorch_output = open("gsc_pytorch_d_result", "r")
+        gsc_pytorch_log = gsc_pytorch_output.read()
+        assert("Done. The result was written to `result.txt`." in gsc_pytorch_log)
+        assert("error: " not in gsc_pytorch_log)
+
+    @pytest.mark.gsc
+    @pytest.mark.skipif(distro_ver != "ubuntu:22.04", reason='GSC pytorch base image version is compatible with Ubuntu 22.04')
+    def test_gsc_pytorch_debugoptimized_workload(self):
+        gsc_build_log = open("gsc_build_log_debugoptimized", "r")
+        assert("RUN cd /gramine     && meson setup build/ --prefix=\"/gramine/meson_build_output\"        --buildtype=debugoptimized" in gsc_build_log)
+        assert("buildtype                                       : debugoptimized" in gsc_build_log)
+        gsc_pytorch_verifier_output = open("gsc_pytorch_do_verifier_result", "r")
+        gsc_pytorch_verifier_log = gsc_pytorch_verifier_output.read()
+        assert("error: " not in gsc_pytorch_verifier_log)
+
+        gsc_pytorch_output = open("gsc_pytorch_do_result", "r")
+        gsc_pytorch_log = gsc_pytorch_output.read()
+        assert("Done. The result was written to `result.txt`." in gsc_pytorch_log)
+        assert("error: " not in gsc_pytorch_log)
